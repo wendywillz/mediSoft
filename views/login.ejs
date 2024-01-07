@@ -35,18 +35,18 @@ html(lang='en')
           background-color: #45a049;
       }
   body
-    form(action='process_signup.php', method='post')
+    form(action='./login', method='post')
       h2 Doctors Login Page
 
-      label(for='username') Username:
-      input(type='text', id='username', name='username', required)
+      label(for='email') Username:
+      input(type='text', id='email', name='email', required)
 
       label(for='password') Password:
       input(type='password', id='password', name='password', required)
 
-      button(type='submit') Sign Up
+      button(type='submit') Login
 
       .login-link
         p Don't have an account?
-        a(href='/register')
+        a(href='./signup') 
           button(type='button') Register Here

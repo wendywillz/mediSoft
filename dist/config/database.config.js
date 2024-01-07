@@ -4,5 +4,6 @@ const sequelize_1 = require("sequelize");
 const sequelize = new sequelize_1.Sequelize({
     dialect: "sqlite",
     storage: "./database.sqlite",
+    logging: false
 });
 exports.default = sequelize;

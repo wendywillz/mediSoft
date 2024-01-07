@@ -47,20 +47,17 @@ html(lang='en')
           text-decoration: underline;
       }
   body
-    form(action='process_doctor_signup.php', method='post')
+    form(action='./reg', method='post')
       h2 Doctor Sign-up
 
-      label(for='doctorName') Doctor's Name:
-      input(type='text', id='doctorName', name='doctorName', required)
+      label(for='doctorsName') Doctor's Name:
+      input(type='text', id='doctorName', name='doctorsName', required)
 
       label(for='email') Email Address:
       input(type='email', id='email', name='email', required)
 
       label(for='password') Password:
       input(type='password', id='password', name='password', required)
-
-      label(for='confirmPassword') Confirm Password:
-      input(type='password', id='confirmPassword', name='confirmPassword', required)
 
       label(for='specialization') Specialization:
       select(id='specialization', name='specialization', required)
@@ -74,12 +71,12 @@ html(lang='en')
         option(value='male') Male
         option(value='female') Female
 
-      label(for='phoneNumber') Phone Number:
-      input(type='tel', id='phoneNumber', name='phoneNumber', required)
+      label(for='phonenumber') Phone Number:
+      input(type='tel', id='phonenumber', name='phonenumber', required)
 
       button(type='submit') Sign Up
 
       .login-link
         p Already have an account? 
-        a(href='/login') 
+        a(href='./login') 
           button(type='button') Login

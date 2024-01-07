@@ -9,18 +9,13 @@ const router = express_1.default.Router();
 router.get('/', function (req, res, next) {
     res.render('index', { title: 'Express' });
 });
-router.get("/login", function (req, res, next) {
+router.get("/doctor/login", function (req, res, next) {
     res.render("login", { title: "Login" });
 });
-router.get("/register", function (req, res, next) {
+router.get("/doctor/signup", function (req, res, next) {
     res.render("register", { title: "Register" });
 });
-router.post("/users", function (req, res, next) {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(req.body));
-});
-router.get("/users", function (req, res, next) {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(req.body));
+router.get("/doctor/dashboard", function (req, res, next) {
+    res.render("dashboard", { title: "Dashboard" });
 });
 exports.default = router;

@@ -1,59 +1,34 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database.config";
-import { v4 as uuidv4 } from "uuid";
 import Doctor from "./doctor";
 
 
-uuidv4();
 
-
-interface ReportsInterface {
-  doctorId: typeof uuidv4;
-  patientsId: string;
-  Patientsname: string;
-  Age: string;
-  hostipalName: string;
-  weight: string;
-  height: string;
-  bloodGroup: string;
-  genotype: string;
-  bloodPressure: string;
-  HIV_status: string;
-  hepatitis: string;
-}
-
-class Notes extends Model<ReportsInterface> {
-    public doctorId?: string;
-
-    constructor(doctorId?: string) {
-        super();
-        this.doctorId = doctorId;
-    }
+class Report extends Model {
+  public patientsName!: string;
+  public Age!: number;
+  public hospitalName!: string;
+  public weight!: string;
+  public height!: string;
+  public bloodGroup!: string;
+  public genotype!: string;
+  public bloodPressure!: string;
+  public HIV_status!: string;
+  public hepatitis!: string;
+  public doctorId!: string;
 }
 
 Report.init(
-{
-    doctorId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      reference:{
-        model: Doctor,
-        key: 'id'
-      },
-    },
-    patientsId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    Patientsname: {
+  {
+    patientsName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     Age: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
     },
-    hostipalName: {
+    hospitalName: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -84,6 +59,7 @@ Report.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+
   },
   {
     sequelize,

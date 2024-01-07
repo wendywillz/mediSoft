@@ -5,37 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const database_config_1 = __importDefault(require("../config/database.config"));
-const uuid_1 = require("uuid");
 const doctor_1 = __importDefault(require("./doctor"));
-(0, uuid_1.v4)();
-class Notes extends sequelize_1.Model {
-    constructor(doctorId) {
-        super();
-        this.doctorId = doctorId;
-    }
+class Report extends sequelize_1.Model {
 }
 Report.init({
-    doctorId: {
-        type: sequelize_1.DataTypes.UUID,
-        allowNull: false,
-        reference: {
-            model: doctor_1.default,
-            key: 'id'
-        },
-    },
-    patientsId: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    Patientsname: {
+    patientsName: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
     Age: {
-        type: sequelize_1.DataTypes.STRING,
+        type: sequelize_1.DataTypes.NUMBER,
         allowNull: false,
     },
-    hostipalName: {
+    hospitalName: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },

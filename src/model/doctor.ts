@@ -1,20 +1,18 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database.config";
 import { v4 as uuidv4 } from "uuid";
-import Report from "./report";
 
 
-interface DoctorsInterface {
-  id: string;
-  doctorsName: string;
-  email: string;
-  password: string;
-  specialization: string;
-  gender: string;
-  phonenumber: string;
+class Doctor extends Model {
+  public email!: string;
+  public doctorsName!: string;
+  public specialization!: string;
+  public gender!: string;
+  public phonenumber!: string;
+  public password!: string;
+  public id!: string;
 }
 
-export class Doctor extends Model<DoctorsInterface> {}
 Doctor.init(
   {
     id: {
@@ -52,7 +50,5 @@ Doctor.init(
     modelName: "Doctor",
   }
 );
-Doctor.hasMany(Report, {foreignKey: 'DoctorId'});
-
 
 export default Doctor;
