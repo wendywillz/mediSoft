@@ -63,3 +63,9 @@
 
 //   }
 // }
+
+let arr = [121, 122, 123, 124, 125, 120, 122, 132];
+let str = arr.join("");
+console.log(str);
+console.log(str.charAt(0));
+console.log(str.charAt(1));

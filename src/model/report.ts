@@ -1,71 +1,23 @@
-import { DataTypes, Model } from "sequelize";
-import sequelize from "../config/database.config";
+import mongoose from "mongoose";
 import Doctor from "./doctor";
 
 
 
-class Report extends Model {
-  public patientsName!: string;
-  public Age!: number;
-  public hospitalName!: string;
-  public weight!: string;
-  public height!: string;
-  public bloodGroup!: string;
-  public genotype!: string;
-  public bloodPressure!: string;
-  public HIV_status!: string;
-  public hepatitis!: string;
-  public doctorId!: string;
-}
+const ReportSchema = new mongoose.Schema({
+  doctorId: { type: mongoose.Schema.Types.ObjectId, ref: Doctor },
+  patientsName: String,
+  Age: Number,
+  hospitalName: String,
+  weight: String,
+  height: String,
+  bloodGroup: String,
+  genotype: String,
+  bloodPressure: String,
+  HIV_status: String,
+  hepatitis: String,
+  createdAt: { type: Date, default: Date.now },
+});
 
-Report.init(
-  {
-    patientsName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    Age: {
-      type: DataTypes.NUMBER,
-      allowNull: false,
-    },
-    hospitalName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    weight: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    height: {
-      type: DataTypes.STRING,
-    },
-    bloodGroup: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    genotype: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    bloodPressure: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    HIV_status: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    hepatitis: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
-  },
-  {
-    sequelize,
-    modelName: "Report",
-  }
-);
-Report.belongsTo(Doctor, {foreignKey: 'doctorId'});
+const Report = mongoose.model("Report", ReportSchema);
 
 export default Report;

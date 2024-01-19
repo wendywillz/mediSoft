@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../stylesheets/doctor.css">
+</head>
+<body>
+    <header>
+         <form id="logoutForm" action="/doctor/logout" method="post">
+          <button id="logout" type="submit">Logout</button>
+        </form>
+    </header>
+    <h1> Users Dashboard </h1>
+
+    <h3> Welcome, <%= doctorsName %> </h3>
+    <h2> REPORTS </h2>
+    <button id="openReportModalBtn">Create Report</button>
+    <div id="">
+            <div id="reportModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closeReportModalBtn">&times;</span>
+                    <h2>Create Report</h2>
+                    <form action="/doctor/report" method="post">
+                <label for="patientsName">Patient's Name:</label>
+                <input type="text" id="patientsName" name="patientsName" required />
+
+                <label for="Age">Age:</label>
+                <input type="number" id="Age" name="Age" required />
+
+                <label for="hospitalName">Hospital Name:</label>
+                <input type="text" id="hospitalName" name="hospitalName" required />
+
+                <label for="weight">Weight:</label>
+                <input type="text" id="weight" name="weight" required />
+
+                <label for="height">Height:</label>
+                <input type="text" id="height" name="height" required />
+
+                <label for="bloodGroup">Blood Group:</label>
+                <select name="bloodGroup" id="bloodGroup">
+                <option value="A positive (A+)">A positive (A+)</option>
+                <option value="A negative (A-)">A negative (A-)</option>
+                <option value="B positive (B+)">B positive (B+)</option>
+                <option value="B negative (B-)">B negative (B-)</option>
+                <option value="AB positive (AB+)">AB positive (AB+)</option>
+                <option value="AB negative (AB-)">A negative (AB-)</option>
+                <option value="O positive (O+)">O postive (O+)</option>
+                <option value="O nagative (O-)">O negative (O-)</option>
+                </select>
+
+                <label for="genotype">Genotype:</label>
+            <select name="genotype" id="genotype">
+                <option value="AA">AA</option>
+                <option value="AS">AS</option>
+                <option value="SS">SS</option>
+                <option value="SC">SC</option>
+                <option value="AC">AC</option>
+                </select>
+
+                <label for="bloodPressure">Blood Pressure:</label>
+                <input type="text" id="bloodPressure" name="bloodPressure" required />
+
+                <label for="HIV_status">HIV Status:</label>
+                <select name="HIV_status" id="HIV_status">
+                <option value="Negative (-)"> Negative (-) </option>
+                <option value="Postive (+)"> Postive (+) </option>
+                </select>
+
+                <label for="hepatitis">Hepatitis:</label>
+                <select name="hepatitis" id="hepatitis">
+                <option value="A positive (A+)">A positive (A+)</option>
+                <option value="A negative (A-)">A negative (A-)</option>
+                <option value="B positive (B+)">B positive (B+)</option>
+                <option value="B negative (B+)">B negative (B+)</option>
+                <option value="C positive (C+)">C positive (C+)</option>
+                <option value="C negative (C-)">C negative (C-)</option>
+                </select>
+
+                <button type="submit">Create Report</button>
+            </form>
+        </div>
+        </div>
+    </div>
+
+<div id="reportList">
+    <!-- Add this container for pagination -->
+<!-- <div id="paginationContainer" class="pagination"></div> -->
+
+
+</div>
+
+<div id="editModal" class="modal">
+        <div class="modal-content">
+            <span id="closeEditModalBtn" class="close">&times;</span>
+            <h2>Edit Doctor</h2>
+            <form id="editForm">
+                <!-- Edit Doctor Form Elements -->
+        <label for="editPatientsName">Patient's Name:</label>
+        <input type="text" id="editPatientsName" name="editPatientsName" required />
+
+        <label for="editAge">Age:</label>
+        <input type="number" id="editAge" name="editAge" required />
+
+        <label for="editHospitalName">Hospital Name:</label>
+        <input type="text" id="editHospitalName" name="editHospitalName" required />
+
+        <label for="editWeight">Weight:</label>
+        <input type="text" id="editWeight" name="editWeight" required />
+
+        <label for="editHeight">Height:</label>
+        <input type="text" id="editHeight" name="editHeight" required />
+
+        <label for="editBloodGroup">Blood Group:</label>
+        <select name="editBloodGroup" id="editBloodGroup">
+        <option value="A positive (A+)">A positive (A+)</option>
+        <option value="A negative (A-)">A negative (A-)</option>
+        <option value="B positive (B+)">B positive (B+)</option>
+        <option value="B negative (B-)">B negative (B-)</option>
+        <option value="AB positive (AB+)">AB positive (AB+)</option>
+        <option value="AB negative (AB-)">A negative (AB-)</option>
+        <option value="O positive (O+)">O postive (O+)</option>
+        <option value="O nagative (O-)">O negative (O-)</option>
+        </select>
+
+        <label for="editGenotype">Genotype:</label>
+        <select name="editGenotype" id="editGenotype">
+        <option value="AA">AA</option>
+        <option value="AS">AS</option>
+        <option value="SS">SS</option>
+        <option value="SC">SC</option>
+        <option value="AC">AC</option>
+        </select>
+
+        <label for="editBloodPressure">Blood Pressure:</label>
+        <input type="text" id="editBloodPressure" name="editBloodPressure" required />
+
+        <label for="editHIV_status">HIV Status:</label>
+        <select name="editHIV_status" id="editHIV_status">
+        <option value="Negative (-)"> Negative (-) </option>
+        <option value="Postive (+)"> Postive (+) </option>
+        </select>
+
+        <label for="editHepatitis">Hepatitis:</label>
+        <select name="editHepatitis" id="editHepatitis">
+        <option value="A positive (A+)">A positive (A+)</option>
+        <option value="A negative (A-)">A negative (A-)</option>
+        <option value="B positive (B+)">B positive (B+)</option>
+        <option value="B negative (B+)">B negative (B+)</option>
+        <option value="C positive (C+)">C positive (C+)</option>
+        <option value="C negative (C-)">C negative (C-)</option>
+        </select>
+                <!-- Add other fields here -->
+
+                <button type="button" id="saveEditBtn">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Doctor Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span id="closeDeleteModalBtn" class="close">&times;</span>
+            <h2>Delete Report</h2>
+            <p>Are you sure you want to delete this report?</p>
+            <button type="button" id="confirmDeleteBtn">Delete</button>
+        </div>
+    </div>
+
+</div>
+<script src="../script/doctor.js"></script>
+</body>
+</html>

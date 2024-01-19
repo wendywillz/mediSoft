@@ -1,9 +1,14 @@
-import { Sequelize } from "sequelize";
+// import mongoose from "mongoose";
 
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "./database.sqlite",
-  logging: false
-})
+// const database = asyn() => {
+//   try {
+//     await mongoose.connect("mongodb://localhost:27017/doctor", {
+//     }, () => {
+//       console.log("Connected to Database")
+//     });
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// }
 
-export default sequelize;
+// export default database;

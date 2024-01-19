@@ -1,0 +1,35 @@
+[{
+  "borough": "Brooklyn",
+  "cuisine": "American ",
+  "name": "Regina Caterers"
+},
+{
+  "borough": "Manhattan",
+  "cuisine": "Café/Coffee/Tea",
+  "name": "Caffe Reggio"
+},
+{
+  "borough": "Manhattan",
+  "cuisine": "American ",
+  "name": "Regency Hotel"
+},
+{
+  "borough": "Manhattan",
+  "cuisine": "American ",
+  "name": "Regency Whist Club"
+},
+{
+  "borough": "Queens",
+  "cuisine": "American ",
+  "name": "Rego Park Cafe"
+},
+{
+  "borough": "Queens",
+  "cuisine": "Pizza",
+  "name": "Regina Pizza"
+},
+{
+  "borough": "Manhattan",
+  "cuisine": "American ",
+  "name": "Regal Entertainment Group"
+}]

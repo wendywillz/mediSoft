@@ -1,37 +1,37 @@
 import express from "express";
-import { getAllDoctors, getDoctorDetails, editDoctor, deleteDoctor, createDoctor, loginDoctor, createReport, getAllReportsByDoctor, getReport, updateReport, deleReport,authenticateToken } from "../controller/doctor";
-
+import { createReport, getDoctorReports, updateDoctorReport, deleteDoctorReport, getDoctorReportDetails } from "../controller/report";
+import { loginDoctor } from "../controller/doctor";
 
 const router = express.Router();
 
-// create doctor
-router.post("/reg", createDoctor);
-// login doctor
-router.post("/login", loginDoctor);
-
-// Dashboard of Doctors
 
 
-router.get("/", getAllDoctors);
+router.post("/report", createReport);
+router.get("/reports", getDoctorReports);
+router.get("/reports/:id", getDoctorReportDetails);
+router.put("/reports/:id", updateDoctorReport);
+router.delete("/reports/:id", deleteDoctorReport);
 
 
-router.route("/:id")
-    .get(getDoctorDetails)
-    .put(editDoctor)
-    .delete(deleteDoctor)
-//create doctors report
-router.post("/report", authenticateToken, createReport);
+// login Doctor and Admin
+router.post("/login", loginDoctor, async (req, res) => {
+  if ((req.session as any).isAdmin === true) {
+    return res.redirect("/admin/dashboard");
+  } else {
+    return res.redirect("/doctor/dashboard");
+  }
+});
 
-//get all reports by a doctor
-router.get("/report/:doctorId", authenticateToken, getAllReportsByDoctor);
-
-//get patient report
-router.get("/report/:doctorId/:reportId", authenticateToken, getReport);
-
-//update patient report
-router.put("/report/:reportId", authenticateToken, updateReport);
-
-//delete patient report
-router.delete("/report/:reportId", authenticateToken, deleReport);
+router.post("/logout", (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) {
+      const err = new Error("Internal Server Error");
+      return next(err);
+    } else {
+      console.log("did you see me");
+      res.redirect("/");
+    }
+  });
+});
 
 export default router;

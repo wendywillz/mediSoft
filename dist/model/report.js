@@ -3,54 +3,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
-const database_config_1 = __importDefault(require("../config/database.config"));
+const mongoose_1 = __importDefault(require("mongoose"));
 const doctor_1 = __importDefault(require("./doctor"));
-class Report extends sequelize_1.Model {
-}
-Report.init({
-    patientsName: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    Age: {
-        type: sequelize_1.DataTypes.NUMBER,
-        allowNull: false,
-    },
-    hospitalName: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    weight: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    height: {
-        type: sequelize_1.DataTypes.STRING,
-    },
-    bloodGroup: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    genotype: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    bloodPressure: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    HIV_status: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-    hepatitis: {
-        type: sequelize_1.DataTypes.STRING,
-        allowNull: false,
-    },
-}, {
-    sequelize: database_config_1.default,
-    modelName: "Report",
+const ReportSchema = new mongoose_1.default.Schema({
+    doctorId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: doctor_1.default },
+    patientsName: String,
+    Age: Number,
+    hospitalName: String,
+    weight: String,
+    height: String,
+    bloodGroup: String,
+    genotype: String,
+    bloodPressure: String,
+    HIV_status: String,
+    hepatitis: String,
+    createdAt: { type: Date, default: Date.now },
 });
-Report.belongsTo(doctor_1.default, { foreignKey: 'doctorId' });
+const Report = mongoose_1.default.model("Report", ReportSchema);
 exports.default = Report;

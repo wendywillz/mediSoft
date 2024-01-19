@@ -12,98 +12,173 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteReport = exports.editReport = exports.getReportDetails = exports.getAllReports = exports.CreateReport = void 0;
+exports.deleteReport = exports.updateReport = exports.getReport = exports.getAllReports = exports.deleteDoctorReport = exports.updateDoctorReport = exports.getDoctorReportDetails = exports.getDoctorReports = exports.getReportDetails = exports.createReport = void 0;
 const report_1 = __importDefault(require("../model/report"));
-//Create Report Function
-const CreateReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newReport = req.body;
-        const createdReport = yield report_1.default.create(newReport);
-        res.status(201).send(createdReport);
+        const doctorId = req.session.doctorId;
+        if (!doctorId) {
+            return res
+                .status(401)
+                .json({ message: "Unauthorized: Doctor not logged in" });
+        }
+        const reportData = Object.assign(Object.assign({}, req.body), { doctorId });
+        const report = new report_1.default(reportData);
+        yield report.save();
+        res.redirect("/doctor/dashboard");
     }
     catch (error) {
-        console.error("Error creating report", error);
-        res.status(500).json({ message: "cant create report" });
+        console.error("Error creating report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
-exports.CreateReport = CreateReport;
-//Get all Reports Function
-const getAllReports = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.createReport = createReport;
+// View details of a single report
+const getReportDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const reportId = req.params.id;
     try {
-        const allReports = yield report_1.default.findAll();
-        if (allReports) {
-            res.status(200).json(allReports);
+        const report = yield report_1.default.findById(reportId);
+        if (!report) {
+            return res.status(404).json({ message: "Report not found" });
         }
-        else {
-            res.status(200).json(allReports);
-        }
+        res.status(200).json(report);
     }
     catch (error) {
-        console.error("Error getting all reports", error);
-        res.status(500).json({ message: "cant get all reports" });
+        console.error("Error getting report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+exports.getReportDetails = getReportDetails;
+// Import necessary modules and models
+// Fetch reports created by the logged-in doctor
+const getDoctorReports = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const doctorId = req.session.doctorId;
+        if (!doctorId) {
+            return res
+                .status(401)
+                .json({ message: "Unauthorized: Doctor not logged in" });
+        }
+        const reports = yield report_1.default.find({ doctorId });
+        res.status(200).json({ message: "Reports Retrieved Successfully", reports });
+    }
+    catch (error) {
+        console.error("Error getting doctor's reports:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+exports.getDoctorReports = getDoctorReports;
+//view a single report created by the logged-in doctor
+const getDoctorReportDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorId = req.session.doctorId;
+    const reportId = req.params.id;
+    try {
+        const report = yield report_1.default.findOne({ _id: reportId, doctorId });
+        if (!report) {
+            return res.status(404).json({ message: "Report not found or unauthorized" });
+        }
+        res.status(200).json(report);
+    }
+    catch (error) {
+        console.error("Error getting doctor's report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+exports.getDoctorReportDetails = getDoctorReportDetails;
+// Import necessary modules and models
+// Update a report created by the logged-in doctor
+const updateDoctorReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorId = req.session.doctorId;
+    const reportId = req.params.id;
+    const updates = req.body;
+    try {
+        const report = yield report_1.default.findOneAndUpdate({ _id: reportId, doctorId }, updates, { new: true });
+        if (!report) {
+            return res.status(404).json({ message: "Report not found or unauthorized" });
+        }
+        res.status(200).json({ message: "Report Updated Successfully", report });
+    }
+    catch (error) {
+        console.error("Error updating doctor's report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+exports.updateDoctorReport = updateDoctorReport;
+// Delete a report created by the logged-in doctor
+const deleteDoctorReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorId = req.session.doctorId;
+    const reportId = req.params.id;
+    try {
+        const report = yield report_1.default.findOneAndDelete({ _id: reportId, doctorId });
+        if (!report) {
+            return res.status(404).json({ message: "Report not found or unauthorized" });
+        }
+        res.status(200).json({ message: "Report Deleted Successfully" });
+    }
+    catch (error) {
+        console.error("Error deleting doctor's report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+exports.deleteDoctorReport = deleteDoctorReport;
+// Fetch all reports
+const getAllReports = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const reports = yield report_1.default.find();
+        res.status(200).json({ message: "Reports Retrived Succefully", reports });
+    }
+    catch (error) {
+        console.error("Error getting reports:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 exports.getAllReports = getAllReports;
 // View details of a single report
-const getReportDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const reportId = req.params.id;
     try {
-        const reportId = req.params.id;
-        const report = yield report_1.default.findOne({ where: { id: reportId } });
+        const report = yield report_1.default.findById(reportId);
         if (!report) {
-            res.status(404).json({ message: "Report not found" });
+            return res.status(404).json({ message: "Report not found" });
         }
-        else {
-            res.status(200).json(report);
-        }
+        res.status(200).json(report);
     }
     catch (error) {
-        console.error("Error getting report details", error);
-        res.status(500).json({ error: "cant get report details" });
+        console.error("Error getting report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
-exports.getReportDetails = getReportDetails;
-// Update report details
-const editReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getReport = getReport;
+// Update a report
+const updateReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const reportId = req.params.id;
+    const updates = req.body;
     try {
-        const reportId = parseInt(req.params.id, 10);
-        const updatedReport = yield report_1.default.findOne({ where: { id: reportId } });
-        if (updatedReport) {
-            updatedReport.patientsName = req.body.patientsName;
-            updatedReport.Age = req.body.Age;
-            updatedReport.hospitalName = req.body.hospitalName;
-            updatedReport.weight = req.body.weight;
-            updatedReport.height = req.body.height;
-            updatedReport.bloodGroup = req.body.bloodGroup;
-            updatedReport.genotype = req.body.genotype;
-            updatedReport.bloodPressure = req.body.bloodPressure;
-            updatedReport.HIV_status = req.body.HIV_status;
-            updatedReport.hepatitis = req.body.hepatitis;
+        const report = yield report_1.default.findByIdAndUpdate(reportId, updates, { new: true });
+        if (!report) {
+            return res.status(404).json({ message: "Report not found" });
         }
-        yield (updatedReport === null || updatedReport === void 0 ? void 0 : updatedReport.save());
-        res.send(updatedReport);
+        res.status(200).json({ message: "Report Updated Successfully", report });
     }
     catch (error) {
-        console.error("Error updating report", error);
-        res.status(500).json({ error: "Error updating report" });
+        console.error("Error updating report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
-exports.editReport = editReport;
-// Delete report
+exports.updateReport = updateReport;
+// Delete a report
 const deleteReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const reportId = req.params.id;
     try {
-        const reportId = parseInt(req.params.id, 10);
-        const reportToDelete = yield report_1.default.findByPk(reportId);
-        if (!reportToDelete) {
-            res.status(404).json({ message: "Report not found" });
+        const report = yield report_1.default.findByIdAndDelete(reportId);
+        if (!report) {
+            return res.status(404).json({ message: "Report not found" });
         }
-        else {
-            yield reportToDelete.destroy();
-            res.status(204).send({ reportToDelete });
-        }
+        res.status(200).json({ message: "Report Deleted Successfully" });
     }
     catch (error) {
-        console.error("Error deleting report", error);
-        res.status(500).json({ error: "Cant delete report" });
+        console.error("Error deleting report:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 });
 exports.deleteReport = deleteReport;

@@ -1,9 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
-const sequelize = new sequelize_1.Sequelize({
-    dialect: "sqlite",
-    storage: "./database.sqlite",
-    logging: false
-});
-exports.default = sequelize;
+// import mongoose from "mongoose";
+// const database = asyn() => {
+//   try {
+//     await mongoose.connect("mongodb://localhost:27017/doctor", {
+//     }, () => {
+//       console.log("Connected to Database")
+//     });
+//   } catch (error) {
+//     console.log(error.message);
+//   }
+// }
+// export default database;

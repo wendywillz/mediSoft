@@ -1,29 +1,45 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const report_1 = require("../controller/report");
 const doctor_1 = require("../controller/doctor");
 const router = express_1.default.Router();
-// create doctor
-router.post("/reg", doctor_1.createDoctor);
-// login doctor
-router.post("/login", doctor_1.loginDoctor);
-// Dashboard of Doctors
-router.get("/", doctor_1.getAllDoctors);
-router.route("/:id")
-    .get(doctor_1.getDoctorDetails)
-    .put(doctor_1.editDoctor)
-    .delete(doctor_1.deleteDoctor);
-//create doctors report
-router.post("/report", doctor_1.authenticateToken, doctor_1.createReport);
-//get all reports by a doctor
-router.get("/report/:doctorId", doctor_1.authenticateToken, doctor_1.getAllReportsByDoctor);
-//get patient report
-router.get("/report/:doctorId/:reportId", doctor_1.authenticateToken, doctor_1.getReport);
-//update patient report
-router.put("/report/:reportId", doctor_1.authenticateToken, doctor_1.updateReport);
-//delete patient report
-router.delete("/report/:reportId", doctor_1.authenticateToken, doctor_1.deleReport);
+router.post("/report", report_1.createReport);
+router.get("/reports", report_1.getDoctorReports);
+router.get("/reports/:id", report_1.getDoctorReportDetails);
+router.put("/reports/:id", report_1.updateDoctorReport);
+router.delete("/reports/:id", report_1.deleteDoctorReport);
+// login Doctor and Admin
+router.post("/login", doctor_1.loginDoctor, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.session.isAdmin === true) {
+        return res.redirect("/admin/dashboard");
+    }
+    else {
+        return res.redirect("/doctor/dashboard");
+    }
+}));
+router.post("/logout", (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err) {
+            const err = new Error("Internal Server Error");
+            return next(err);
+        }
+        else {
+            console.log("did you see me");
+            res.redirect("/");
+        }
+    });
+});
 exports.default = router;

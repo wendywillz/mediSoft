@@ -1,93 +1,188 @@
 import { Request, Response, NextFunction } from "express";
-import { v4 as uuidv4 } from "uuid";
-import Report from '../model/report';
+import Report from "../model/report";
+import Doctor from "../model/doctor";
 
-//Create Report Function
-export const CreateReport = async (req: Request, res: Response ) => {
-    try{
-        const newReport: Report = req.body;
-        const createdReport = await Report.create(newReport as Partial<Report>);
-        res.status(201).send(createdReport);
 
-      } catch(error) {
-        console.error("Error creating report", error);
-        res.status(500).json({message: "cant create report"});
+export const createReport = async (req: Request, res: Response) => {
+try {
+    const doctorId = (req.session as { doctorId?: string }).doctorId; 
+
+    if (!doctorId) {
+        return res
+            .status(401)
+            .json({ message: "Unauthorized: Doctor not logged in" });
     }
-};
+    const reportData = { ...req.body, doctorId };
 
-//Get all Reports Function
-export const getAllReports = async (req: Request, res: Response ) => {
-    try{
-        const allReports = await Report.findAll();
+    const report = new Report(reportData);
+    await report.save();
 
-        if(allReports) {
-            res.status(200).json(allReports);
-        } else {
-        res.status(200).json(allReports);
-        }
-    }catch(error){
-        console.error("Error getting all reports", error);
-        res.status(500).json({message: "cant get all reports"});
-    }
+    res.redirect("/doctor/dashboard");
+} catch (error) {
+    console.error("Error creating report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 // View details of a single report
-export const getReportDetails = async (req: Request, res: Response ) => {
-    try{
-        const reportId = req.params.id;
-        const report = await Report.findOne({ where: { id: reportId } });
-        
-        if(!report){
-            res.status(404).json({message: "Report not found"});
-        } else {
-            res.status(200).json(report);
-        }
-    } catch(error){
-        console.error("Error getting report details", error);
-        res.status(500).json({error: "cant get report details"});
+export const getReportDetails = async (req: Request, res: Response) => {
+  const reportId = req.params.id;
+  try {
+    const report = await Report.findById(reportId);
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
     }
+
+    res.status(200).json(report);
+  } catch (error) {
+    console.error("Error getting report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
-// Update report details
-export const editReport = async (req: Request, res: Response ) => {
-    try{
-        const reportId = parseInt(req.params.id, 10);
-        const updatedReport = await Report.findOne({ where: { id: reportId } });
+// Import necessary modules and models
 
-        if(updatedReport) {
-            updatedReport.patientsName = req.body.patientsName;
-            updatedReport.Age = req.body.Age;
-            updatedReport.hospitalName = req.body.hospitalName;
-            updatedReport.weight = req.body.weight;
-            updatedReport.height = req.body.height;
-            updatedReport.bloodGroup = req.body.bloodGroup;
-            updatedReport.genotype = req.body.genotype;
-            updatedReport.bloodPressure = req.body.bloodPressure;
-            updatedReport.HIV_status = req.body.HIV_status;
-            updatedReport.hepatitis = req.body.hepatitis;   
-        }
-        await updatedReport?.save();
-        res.send(updatedReport);
-    }catch(error){
-        console.error("Error updating report", error);
-        res.status(500).json({error: "Error updating report"});
+// Fetch reports created by the logged-in doctor
+export const getDoctorReports = async (req: Request, res: Response) => {
+  try {
+    const doctorId = (req.session as { doctorId?: string }).doctorId;
+
+    if (!doctorId) {
+      return res
+        .status(401)
+        .json({ message: "Unauthorized: Doctor not logged in" });
     }
+
+    const reports = await Report.find({ doctorId });
+
+    res.status(200).json({ message: "Reports Retrieved Successfully", reports });
+  } catch (error) {
+    console.error("Error getting doctor's reports:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
-// Delete report
-export const deleteReport = async (req: Request, res: Response ) => {
-    try{
-        const reportId = parseInt(req.params.id, 10);
-        const reportToDelete = await Report.findByPk(reportId);
+//view a single report created by the logged-in doctor
+export const getDoctorReportDetails = async (req: Request, res: Response) => {
+  const doctorId = (req.session as { doctorId?: string }).doctorId;
+  const reportId = req.params.id;
 
-        if(!reportToDelete){
-            res.status(404).json({message: "Report not found"});
-        } else {
-            await reportToDelete.destroy();
-            res.status(204).send({reportToDelete});
-        }
-    }catch(error){
-        console.error("Error deleting report", error);
-        res.status(500).json({error: "Cant delete report"});
+  try {
+    const report = await Report.findOne({ _id: reportId, doctorId });
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found or unauthorized" });
     }
+
+    res.status(200).json(report);
+  } catch (error) {
+    console.error("Error getting doctor's report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Import necessary modules and models
+
+// Update a report created by the logged-in doctor
+export const updateDoctorReport = async (req: Request, res: Response) => {
+  const doctorId = (req.session as { doctorId?: string }).doctorId;
+  const reportId = req.params.id;
+  const updates = req.body;
+
+  try {
+    const report = await Report.findOneAndUpdate({ _id: reportId, doctorId }, updates, { new: true });
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found or unauthorized" });
+    }
+
+    res.status(200).json({ message: "Report Updated Successfully", report });
+  } catch (error) {
+    console.error("Error updating doctor's report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Delete a report created by the logged-in doctor
+export const deleteDoctorReport = async (req: Request, res: Response) => {
+  const doctorId = (req.session as { doctorId?: string }).doctorId;
+  const reportId = req.params.id;
+
+  try {
+    const report = await Report.findOneAndDelete({ _id: reportId, doctorId });
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found or unauthorized" });
+    }
+
+    res.status(200).json({ message: "Report Deleted Successfully" });
+  } catch (error) {
+    console.error("Error deleting doctor's report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Fetch all reports
+export const getAllReports = async (req: Request, res: Response) => {
+  try {
+    const reports = await Report.find();
+
+    res.status(200).json({ message: "Reports Retrived Succefully", reports });
+  } catch (error) {
+    console.error("Error getting reports:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// View details of a single report
+export const getReport = async (req: Request, res: Response) => {
+  const reportId = req.params.id;
+  try {
+    const report = await Report.findById(reportId);
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.status(200).json(report);
+  } catch (error) {
+    console.error("Error getting report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Update a report
+export const updateReport = async (req: Request, res: Response) => {
+  const reportId = req.params.id;
+  const updates = req.body;
+  try {
+    const report = await Report.findByIdAndUpdate(reportId, updates, { new: true });
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.status(200).json({ message: "Report Updated Successfully", report });
+  } catch (error) {
+    console.error("Error updating report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Delete a report
+export const deleteReport = async (req: Request, res: Response) => {
+  const reportId = req.params.id;
+  try {
+    const report = await Report.findByIdAndDelete(reportId);
+
+    if (!report) {
+      return res.status(404).json({ message: "Report not found" });
+    }
+
+    res.status(200).json({ message: "Report Deleted Successfully" });
+  } catch (error) {
+    console.error("Error deleting report:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
